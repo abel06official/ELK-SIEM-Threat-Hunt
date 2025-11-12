@@ -22,7 +22,7 @@ This project utilized a "Beat-to-Elasticsearch-to-Kibana" (B-E-K) architecture, 
 
 ### Architecture Diagram
 
-[Windows 11 VM (Sysmon, Winlogbeat)] --(Logs via Port 9200)--> [Ubuntu SIEM Host (Elasticsearch, Kibana)] <-- [SOC Analyst (Browser)]
+![diagram](images/diagram.png)
 
 
 ---
@@ -75,7 +75,7 @@ With the pipeline active, the simulation and hunt could begin.
     ```kql
     message: VwBhAHoAdQBo*
     ```
-
+    ![screenshot](images/Screenshot1.png)
 ---
 
 ## 4. Analysis & Key Findings
@@ -86,15 +86,19 @@ The hunt successfully uncovered two high-value log events that, when correlated,
 
 This is the "smoking gun" artifact. It's a Sysmon Process Create event that shows **`calc.exe`** being launched. The most critical data point is the **Parent Command Line**, which contains the full, encoded payload.
 
-> **[INSERT SCREENSHOT HERE: A screenshot of your successful KQL query `message: "VwBhAHoAdQBo"` in the Kibana Discover tab, showing the resulting log hits.]**
 
-> **[INSERT SCREENSHOT HERE: A screenshot of the expanded Sysmon Event ID 1 log, clearly highlighting the `winlog.event_data.ParentCommandLine` field. Make sure the encoded string is visible.]**
+![screenshot](images/Screenshot2.png)
+
+![screenshot](images/Screenshot3.png)
+
 
 ### Finding 2: The Malicious Command (PowerShell Event ID 403)
 
 I also located the PowerShell Engine Lifecycle event, which logs the *start* of the PowerShell engine and explicitly captures the `HostApplication` (the command) that initiated it, including the `-e` flag and the Base64 payload.
 
-> **[INSERT SCREENSHOT HERE: A screenshot of the expanded PowerShell Event ID 403 log, clearly highlighting the `winlog.event_data.param3` field. Make sure the `HostApplication` line is visible.]**
+![screenshot](images/Screenshot5.png)
+
+![screenshot](images/Screenshot4.png)
 
 ---
 
@@ -110,4 +114,4 @@ I also located the PowerShell Engine Lifecycle event, which logs the *start* of 
 
 To complete the project, I created a simple visualization in Kibana to show the breakdown of log types coming from my Windows endpoint.
 
-> **[INSERT SCREENSHOT HERE: A screenshot of your final Kibana Dashboard, showing the "P3 - Lo
+![screenshot](images/Screenshot6.png)
